@@ -3,17 +3,20 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Damage:2
+  - Damage:1
+  - Damage:3
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
-  - 
-  - 
-  - 
+  - Enviroment
+  - Enemies
+  - PlayerBullets
   - 
   - 
   - 
@@ -40,4 +43,16 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 3964694099
+    locked: 0
+  - name: Enviroment
+    uniqueID: 291676647
+    locked: 0
+  - name: Enemies
+    uniqueID: 2855580351
+    locked: 0
+  - name: Player
+    uniqueID: 3998956785
     locked: 0
