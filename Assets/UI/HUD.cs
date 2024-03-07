@@ -21,6 +21,7 @@ namespace Chromecore
         }
 
         private void Update() {
+            if (GameManager.gamePaused) return;
             DisplayScore();
         }
 
@@ -29,7 +30,7 @@ namespace Chromecore
         }
 
         private void DisplayScore(){
-            scoreText.text = GameManager.instance.score.ToString();
+            scoreText.text = GameManager.score.ToString();
         }
     }
 }

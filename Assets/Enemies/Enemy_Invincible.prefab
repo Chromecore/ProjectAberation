@@ -4854,7 +4854,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1439386945
-  m_SortingLayer: 3
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -9740,7 +9740,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1439386945
-  m_SortingLayer: 3
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -10089,7 +10089,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.65, y: 0.65, z: 0.65}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8825978222025553030}
@@ -10133,8 +10133,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1439386945
-  m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingLayer: 2
+  m_SortingOrder: 9
   m_Sprite: {fileID: 2747690628134850419, guid: b670ab75dde984907b8570040daa08c5, type: 3}
   m_Color: {r: 0.41185835, g: 0.14786398, b: 0.6698113, a: 1}
   m_FlipX: 0
@@ -10232,8 +10232,8 @@ GameObject:
   - component: {fileID: 8825978222025553030}
   - component: {fileID: 1356873008680912521}
   - component: {fileID: 1393138574819231232}
-  - component: {fileID: 8579217012327907560}
   - component: {fileID: 7087389856985770937}
+  - component: {fileID: 7478476915651106093}
   m_Layer: 7
   m_Name: Enemy_Invincible
   m_TagString: Untagged
@@ -10293,18 +10293,21 @@ PolygonCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.28866667}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 0.8828125}
+    newSize: {x: 1, y: 0.8828125}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0, y: 0.28889167}
-      - {x: -0.24828053, y: -0.14535171}
-      - {x: 0.25195503, y: -0.14535171}
+    - - {x: -0.25, y: 0.43359375}
+      - {x: -0.5, y: 0}
+      - {x: -0.25, y: -0.43359375}
+      - {x: 0.25, y: -0.43359375}
+      - {x: 0.5, y: 0}
+      - {x: 0.25, y: 0.43359375}
   m_UseDelaunayMesh: 0
 --- !u!114 &1393138574819231232
 MonoBehaviour:
@@ -10325,26 +10328,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   mainCollider: {fileID: 1356873008680912521}
---- !u!114 &8579217012327907560
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7941608345863600655}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86997e79b27337e40994849bb16747fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ID: 1
-  speed: 0.7
-  points: 0
-  attackDamage: 1
-  maxCount: 20
-  enemyHealth: {fileID: 1393138574819231232}
-  spriteRenderer: {fileID: 4255742934178064556}
-  contextSteering: {fileID: 7087389856985770937}
 --- !u!114 &7087389856985770937
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10362,6 +10345,26 @@ MonoBehaviour:
     m_Bits: 128
   angle: 30
   checkDistance: 1
+--- !u!114 &7478476915651106093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7941608345863600655}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 513926fb6d932d048bd23fd8cca3da01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 1
+  speed: 4
+  xpDropped: 0
+  attackDamage: 2
+  maxCount: 10
+  enemyHealth: {fileID: 1393138574819231232}
+  spriteRenderer: {fileID: 4255742934178064556}
+  contextSteering: {fileID: 7087389856985770937}
 --- !u!1 &8228796506494227121
 GameObject:
   m_ObjectHideFlags: 0

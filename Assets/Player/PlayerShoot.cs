@@ -37,6 +37,7 @@ namespace Chromecore
 
 		private void Update()
 		{
+            if (GameManager.gamePaused) return;
 			if (InputHandler.Instance.playerActions.Shoot.IsPressed())
 			{
 				if (currentShoot) HandleShoot(shootParticles, shootDelay, 0);
@@ -60,7 +61,8 @@ namespace Chromecore
 
 		private void Shoot(ParticleSystem shootParticles)
 		{
-            AudioPlayer.instance.PlaySound(Sound.shoot);
+            if(shootParticles == shoot2Particles) AudioPlayer.instance.PlaySound(Sound.shootBig);
+            else AudioPlayer.instance.PlaySound(Sound.shoot);
 			shootEvent?.Invoke();
 			timeSinceLastShot = 0;
 			shootParticles.Play();

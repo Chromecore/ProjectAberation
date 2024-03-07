@@ -2,6 +2,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using System.Threading;
 
 namespace Chromecore
 {
@@ -34,7 +35,7 @@ namespace Chromecore
 
 		[Title("References")]
 		[SerializeField, Required] private Rigidbody2D body;
-		[SerializeField, Required] private Collider2D collider;
+		[SerializeField, Required] private Collider2D playerCollider;
 		[SerializeField, Required] private Transform shadowSprite;
 		[SerializeField, Required] private Camera mainCamera;
 
@@ -54,58 +55,37 @@ namespace Chromecore
 		private bool isJumpBuffered;
 		private float jumpBufferedTime;
 
-		// dash
-		private float dashPercent;
-		private bool isDashing;
-
 		// callbacks
 		public event DefaultCallback jumpEvent;
 		public event DefaultCallback landEvent;
-		public event DefaultCallback dashEvent;
-		public event DefaultCallback dashEndEvent;
 
 		private void Reset()
 		{
 			body = GetComponent<Rigidbody2D>();
-			collider = GetComponent<Collider2D>();
+			playerCollider = GetComponent<Collider2D>();
 		}
 
 		private void Start()
 		{
-			InputHandler.Instance.playerActions.Jump.performed += _ => HandleJump();
-            // todo : Remove
-			//InputHandler.Instance.playerActions.Dash.performed += _ => HandleDash();
+			InputHandler.Instance.playerActions.Jump.performed += HandleJumpCallback;
 			InputHandler.Instance.playerActions.Look.performed += ctx => HandleLookInput(ctx.ReadValue<Vector2>(), ctx);
 		}
 
+        private void OnDestroy() 
+        {
+            InputHandler.Instance.playerActions.Jump.performed -= HandleJumpCallback;
+			InputHandler.Instance.playerActions.Look.performed -= ctx => HandleLookInput(ctx.ReadValue<Vector2>(), ctx);
+        }
+
 		private void Update()
 		{
+            if (GameManager.gamePaused)
+            {
+                body.velocity = Vector2.zero;
+                return;
+            }
 			move = InputHandler.Instance.playerActions.Movement.ReadValue<Vector2>();
 			HandleJumpBuffer();
-		}
-
-		private void HandleDash()
-		{
-			if (isDashing) return;
-			StartCoroutine(Dash());
-		}
-
-		private IEnumerator Dash()
-		{
-			isDashing = true;
-			dashEvent?.Invoke();
-
-			float time = 0;
-			do
-			{
-				time += dashTimeIntervals;
-				dashPercent = dashCurve.Evaluate(time);
-				yield return new WaitForFixedUpdate();
-			} while (time <= 1);
-			dashPercent = 0;
-
-			isDashing = false;
-			dashEndEvent?.Invoke();
 		}
 
 		private void HandleJumpBuffer()
@@ -119,7 +99,14 @@ namespace Chromecore
 			}
 		}
 
-		private void HandleJump()
+		private void HandleJumpCallback(InputAction.CallbackContext _)
+		{
+            if (GameManager.gamePaused) return;
+            if(GameManager.instance.noJumpCode) return;
+			HandleJump();
+		}
+
+        private void HandleJump()
 		{
 			if (isJumping)
 			{
@@ -154,11 +141,12 @@ namespace Chromecore
 
 		private void ToggleCollisions(bool toggle)
 		{
-			collider.enabled = toggle;
+			playerCollider.enabled = toggle;
 		}
 
 		private void FixedUpdate()
 		{
+            if (GameManager.gamePaused) return;
 			HandleLook();
 			HandleMovement();
 		}
@@ -167,7 +155,6 @@ namespace Chromecore
 		{
 			// speed
 			float currentSpeed = isJumping ? movementSpeedInAir : movementSpeed;
-			currentSpeed += dashPercent > 0 ? dashPercent * dashSpeed : 0;
 			currentSpeed *= isJumping ? 1 : groundToAir;
 
 			// update the jump land y
@@ -234,7 +221,6 @@ namespace Chromecore
 			knockback = back * amount;
 			for (int i = 0; i < knockbackLength; i++)
 			{
-				//body.velocity += back * amount;
 				yield return new WaitForFixedUpdate();
 				if (knockback.sqrMagnitude > 0) knockback -= -knockback * knockbackDecay;
 			}

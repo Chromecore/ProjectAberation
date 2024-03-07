@@ -1,5 +1,6 @@
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Chromecore
@@ -8,8 +9,8 @@ namespace Chromecore
     {
         [Title("Spawning")]
         [SerializeField] private bool spawningEnabled;
-        [SerializeField, Unit(Units.Second)] private float spawnTime;
-		[SerializeField, Tooltip("x: Inner, y: Outer   (relative to the player)")] private Vector2 spawnRadius;
+        [SerializeField, Unit(Units.Second)] private float lengthOfSpawnTimeCurve;
+        [SerializeField] private AnimationCurve spawnTimeCurve;
 
         [Title("References")]
         [SerializeField, Required, AssetsOnly, AssetList(AssetNamePrefix = "Enemy")] 
@@ -19,6 +20,7 @@ namespace Chromecore
         private Dictionary<int, Queue<EnemyAI>> enemyPool;
         private Dictionary<int, int> enemyCount;
 		
+        private float spawnTime;
 		private float timeSinceLastSpawn;
 
 		private void Awake()
@@ -29,7 +31,13 @@ namespace Chromecore
 
 		private void Update()
 		{
+            if (GameManager.gamePaused) return;
             if(!spawningEnabled) return;
+
+            spawnTime = Time.timeSinceLevelLoad > spawnTimeCurve.keys.Last().time * lengthOfSpawnTimeCurve ?
+                spawnTimeCurve.Evaluate(spawnTimeCurve.keys.Last().time) :
+                spawnTimeCurve.Evaluate(Time.timeSinceLevelLoad / lengthOfSpawnTimeCurve);
+            if(GameManager.instance.doubleEnemiesCode) spawnTime /= 2;
 
 			timeSinceLastSpawn += Time.deltaTime;
 			if(timeSinceLastSpawn >= spawnTime)
@@ -55,27 +63,37 @@ namespace Chromecore
 			EnemyAI newEnemyAI = GetEnemy(enemyAI);
 
 			// set position
-			Vector2 randomDirection = Random.insideUnitCircle.normalized;
-			Vector2 position = (randomDirection * // direction
-				Random.Range(spawnRadius.x, spawnRadius.y)) + // inner and outer range
-				(Vector2)player.position; // relative to player
-			newEnemyAI.transform.position = position;
+			newEnemyAI.transform.position = GetRandomPosition();
 		}
 
-        private void ChangeEnemyCount(int ID, int value){
-            if(enemyCount.ContainsKey(ID)){
+        private Vector2 GetRandomPosition()
+        {
+            return new Vector2(
+                Random.Range(GameManager.instance.roomMinX, GameManager.instance.roomMaxX),
+                Random.Range(GameManager.instance.roomMinY, GameManager.instance.roomMaxY)
+                );
+        }
+
+        private void ChangeEnemyCount(int ID, int value)
+        {
+            if(enemyCount.ContainsKey(ID))
+            {
                 enemyCount[ID] += value;
             }
-            else{
+            else
+            {
                 enemyCount.Add(ID, 1);
             }
         }
 
-        private int GetEnemyCount(int ID){
-            if(enemyCount.ContainsKey(ID)){
+        private int GetEnemyCount(int ID)
+        {
+            if(enemyCount.ContainsKey(ID))
+            {
                 return enemyCount[ID];
             }
-            else{
+            else
+            {
                 enemyCount.Add(ID, 0);
                 return 0;
             }
@@ -109,15 +127,6 @@ namespace Chromecore
 			enemyPool[enemyAI.ID].Enqueue(enemyAI);
             ChangeEnemyCount(enemyAI.ID, -1);
 			enemyAI.gameObject.SetActive(false);
-		}
-
-		private void OnDrawGizmosSelected()
-		{
-			Gizmos.color = Color.yellow;
-			Gizmos.DrawWireSphere(player.position, spawnRadius.x);
-
-			Gizmos.color = Color.red;
-			Gizmos.DrawWireSphere(player.position, spawnRadius.y);
 		}
 	}
 }

@@ -214,5 +214,6 @@ namespace Chromecore
 	{
 		mainMusic,
 		shoot,
+        shootBig,
 	}
 }

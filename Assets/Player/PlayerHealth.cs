@@ -22,6 +22,7 @@ namespace Chromecore
 
         private void OnCollisionStay2D(Collision2D other) 
         {
+            if (GameManager.gamePaused) return;
             bool isDamageInMask = (damageMask & (1 << other.gameObject.layer)) != 0;
             if (isDamageInMask && timeSinceLastHit >= iTime)
 			{
@@ -38,16 +39,15 @@ namespace Chromecore
 
         private void Update() 
         {
+            if (GameManager.gamePaused) return;
             timeSinceLastHit += Time.deltaTime;
             if(timeSinceLastHit >= iTime) isInvincible = false;
-
-            //collider.enabled = !isInvincible;
         }
 
         public override void Kill()
         {
             base.Kill();
-            GameManager.instance.Reset();
+            GameManager.instance.PlayerDeath();
         }
     }
 }

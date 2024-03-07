@@ -8,8 +8,8 @@ namespace Chromecore
     {
         [Title("Attributes")]
         [SerializeField] public int ID;
-        [SerializeField] public float speed;
-        [SerializeField] public float points;
+        [SerializeField] protected float speed;
+        [SerializeField] private int xpDropped;
         [SerializeField] public float attackDamage;
 
         [Title("Spawning")]
@@ -31,13 +31,14 @@ namespace Chromecore
         protected virtual void Start() 
         {
             enemyHealth.killEvent += ResetEnemy;
-            enemyHealth.killEvent += AddPoints;
+            enemyHealth.killEvent += DropXP;
 
             ResetEnemy();
         }
 
         private void Update() 
         {
+            if (GameManager.gamePaused) return;
             HandleMovement();
         }
 
@@ -49,9 +50,9 @@ namespace Chromecore
             transform.position += (Vector3)moveDirection * speed * speedScaler;
         }
 
-        public void AddPoints()
+        public void DropXP()
         {
-            GameManager.instance.score += points;
+            GameManager.instance.SpawnXPParticle(transform.position, xpDropped);
         }
 
 		public void ResetEnemy()

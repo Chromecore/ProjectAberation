@@ -10,7 +10,6 @@ namespace Chromecore
 		[SerializeField] private MMF_Player shootFeedback;
 		[SerializeField] private MMF_Player jumpFeedback;
         [SerializeField] private MMF_Player landFeedback;
-        [SerializeField] private MMF_Player dashFeedback;
         [SerializeField] private MMF_Player damageFeedback;
         [SerializeField] private MMF_Player healFeedback;
         [SerializeField] private MMF_Player killFeedback;
@@ -25,8 +24,6 @@ namespace Chromecore
 			playerShoot.shootEvent += () => { shootFeedback?.PlayFeedbacks(); };
 			playerMovement.jumpEvent += () => { jumpFeedback?.PlayFeedbacks(); };
 			playerMovement.landEvent += () => { landFeedback?.PlayFeedbacks(); };
-			playerMovement.dashEvent += () => { dashFeedback?.PlayFeedbacks(); };
-			playerMovement.dashEndEvent += () => { dashFeedback?.StopFeedbacks(); };
             playerHealth.damageEvent += () => { damageFeedback?.PlayFeedbacks(); };
             playerHealth.healEvent += () => { healFeedback?.PlayFeedbacks(); };
             playerHealth.killEvent += () => { killFeedback?.PlayFeedbacks(); };
